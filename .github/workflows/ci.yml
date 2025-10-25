@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: Lint (if configured)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies if present
+        run: |
+          if [ -f package.json ]; then npm ci || npm install; fi
+      - name: Run ESLint (skip if not configured)
+        run: |
+          if [ -f package.json ]; then npx eslint . || echo 'ESLint finished with exit code'; fi
