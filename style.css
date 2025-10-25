@@ -1,0 +1,63 @@
+/* Simple toolbar and selected-card highlight */
+.mal-export-toolbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999999 !important;
+  /* light default - will switch in dark mode */
+  background: rgba(255,255,255,0.96);
+  color: #1a1a1a;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  padding: 8px 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+
+.mal-export-toolbar span, .mal-export-toolbar label, .mal-export-toolbar button {
+  color: inherit;
+  font-size: 13px;
+}
+
+.mal-export-toolbar button {
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.05) inset;
+}
+
+.mal-export-toolbar button:hover { opacity: 0.95 }
+
+.mal-export-selected-v1 {
+  outline: 2px solid rgba(26,115,232,0.18);
+  background: rgba(26,115,232,0.03);
+}
+
+/* Small checkbox styling fallback for tight card layouts */
+.mal-export-checkbox-v1 { transform: scale(1.05); margin-right: 6px }
+
+/* When click-anywhere is enabled, make cards pointer and show hover */
+.mal-export-card-overlay { cursor: pointer; }
+.mal-export-card-overlay:hover { filter: brightness(0.98); }
+.mal-export-toolbar .mal-export-settings { margin-left: auto; }
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mal-export-toolbar {
+    background: rgba(28,28,30,0.9);
+    color: #e6e6e6;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.6);
+  }
+  .mal-export-toolbar button {
+    background: #3b82f6;
+    color: #fff;
+  }
+  .mal-export-selected-v1 { outline: 2px solid rgba(59,130,246,0.22); background: rgba(59,130,246,0.06); }
+}
