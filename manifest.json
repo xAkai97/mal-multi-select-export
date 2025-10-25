@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "MAL Multi-Select Export (Clipboard)",
+  "name": "MAL Multi-Select Export",
   "version": "0.1.1",
   "description": "Injects checkboxes on MyAnimeList pages so you can multi-select anime and copy titles/metadata to the clipboard.",
   "permissions": [
