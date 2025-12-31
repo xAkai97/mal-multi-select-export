@@ -453,6 +453,7 @@
 
   /**
    * Handles clicks on the anime card for click-anywhere and range selection.
+   * Only intercepts clicks that aren't on interactive elements.
    * @param {MouseEvent} event - The click event
    * @param {HTMLInputElement} checkbox - The checkbox element
    * @param {HTMLElement} node - The anime card element
@@ -469,7 +470,13 @@
       return;
     }
     
-    // Prevent navigation when click-anywhere is enabled
+    // Don't intercept clicks on links, buttons, or other interactive elements
+    const isInteractive = target.closest('a, button, input, textarea, select, [role="button"]');
+    if (isInteractive) {
+      return; // Allow normal interaction
+    }
+    
+    // Only prevent navigation for non-interactive areas
     try {
       event.preventDefault();
       event.stopPropagation();
@@ -531,8 +538,8 @@
 
   // ==================== Global Click Handler ====================
   /**
-   * Global capturing click handler for click-anywhere functionality.
-   * Intercepts clicks on anime cards when the feature is enabled.
+   * Global click handler for click-anywhere functionality.
+   * Only intercepts clicks on anime cards, not the entire page.
    * @param {MouseEvent} event - The click event
    */
   document.addEventListener('click', function handleGlobalClick(event) {
@@ -546,34 +553,34 @@
     if (event.target.closest?.('input, button, textarea, select, label')) return;
 
     // Find the nearest card and its checkbox
-    let card = event.target.closest?.('article, .seasonal-anime');
+    let card = event.target.closest?.('article, .seasonal-anime, .' + CONFIG.CARD_OVERLAY_CLASS);
     let checkbox = card?.querySelector('input.' + CONFIG.CHECKBOX_CLASS);
     
-    // Search upward for a card with a checkbox if not found
-    let searchNode = card;
-    while (!checkbox && searchNode?.parentElement) {
-      searchNode = searchNode.parentElement;
-      checkbox = searchNode.querySelector?.('input.' + CONFIG.CHECKBOX_CLASS);
-      if (checkbox) {
-        card = searchNode;
-        break;
-      }
-    }
+    // If not on a card with a checkbox, don't intercept
+    if (!card || !checkbox) return;
+
+    // Only prevent navigation if we're actually on a card with our checkbox
+    // Check if click target is a link that should be allowed
+    const isLink = event.target.closest('a[href]');
+    const isCheckbox = event.target === checkbox || event.target.closest?.('input.' + CONFIG.CHECKBOX_CLASS);
     
-    if (!checkbox) return;
-
-    // Prevent navigation
-    try {
-      event.preventDefault();
-      event.stopPropagation();
-    } catch (error) {
-      console.warn('Failed to prevent default:', error);
-    }
-
-    // Update last checked index if user clicked the checkbox directly
-    if (event.target === checkbox) {
+    // If clicking checkbox directly, let it handle naturally
+    if (isCheckbox) {
       const allCheckboxes = Array.from(document.querySelectorAll('.' + CONFIG.CHECKBOX_CLASS));
       lastCheckedIndex = checkbox.__malIndex ?? allCheckboxes.indexOf(checkbox);
+      return;
+    }
+    
+    // Only preventDefault if clicking on the card itself (not links)
+    if (!isLink) {
+      try {
+        event.preventDefault();
+        event.stopPropagation();
+      } catch (error) {
+        console.warn('Failed to prevent default:', error);
+      }
+    } else {
+      // Allow link navigation but don't toggle checkbox
       return;
     }
 
@@ -597,7 +604,7 @@
     const allCheckboxes = Array.from(document.querySelectorAll('.' + CONFIG.CHECKBOX_CLASS));
     lastCheckedIndex = checkbox.__malIndex ?? allCheckboxes.indexOf(checkbox);
     updateSelectedCount();
-  }, true);
+  });
 
   // ==================== Keyboard Shortcuts ====================
   /**
@@ -653,19 +660,68 @@
   });
 
   // ==================== Observer for Dynamic Content ====================
-  const contentObserver = new MutationObserver(() => {
-    if (window.__malExportScanTimer) {
-      clearTimeout(window.__malExportScanTimer);
-    }
-    window.__malExportScanTimer = setTimeout(() => {
-      scanAndAttachCheckboxes();
-    }, CONFIG.DEBOUNCE_DELAY);
-  });
+  /**
+   * Observes specific content containers for dynamic updates instead of entire document.
+   * Improves performance by reducing observer scope.
+   */
+  function setupContentObserver() {
+    const contentObserver = new MutationObserver((mutations) => {
+      // Filter mutations to only those affecting anime content
+      const relevantMutation = mutations.some(mutation => {
+        // Check if mutation involves anime-related nodes
+        const hasAnimeContent = mutation.addedNodes.length > 0 && 
+          Array.from(mutation.addedNodes).some(node => {
+            if (node.nodeType !== Node.ELEMENT_NODE) return false;
+            return node.querySelector?.('a[href*="/anime/"]') || 
+                   node.closest?.('article, .seasonal-anime, .js-seasonal-anime-list');
+          });
+        return hasAnimeContent;
+      });
+      
+      if (!relevantMutation) return;
+      
+      if (window.__malExportScanTimer) {
+        clearTimeout(window.__malExportScanTimer);
+      }
+      window.__malExportScanTimer = setTimeout(() => {
+        scanAndAttachCheckboxes();
+      }, CONFIG.DEBOUNCE_DELAY);
+    });
 
-  contentObserver.observe(document.documentElement || document.body, {
-    childList: true,
-    subtree: true
-  });
+    // Observe specific content containers instead of entire document
+    const contentSelectors = [
+      '.js-seasonal-anime-list',
+      '.seasonal-anime-list', 
+      '#content',
+      'main',
+      '[class*="anime-list"]'
+    ];
+    
+    let observerAttached = false;
+    for (const selector of contentSelectors) {
+      const container = document.querySelector(selector);
+      if (container) {
+        contentObserver.observe(container, {
+          childList: true,
+          subtree: true
+        });
+        observerAttached = true;
+        console.log('mal-export: Observing container:', selector);
+        break;
+      }
+    }
+    
+    // Fallback to body if no specific container found
+    if (!observerAttached) {
+      contentObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+      console.log('mal-export: Observing body (fallback)');
+    }
+  }
+
+  setupContentObserver();
 
   // ==================== Initial Scan ====================
   scanAndAttachCheckboxes();
