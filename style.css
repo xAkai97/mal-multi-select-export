@@ -91,82 +91,92 @@
 }
 
 /* Special styling for Clear button */
-.mal-export-toolbar button:nth-of-type(3) {
+.mal-export-toolbar button:nth-of-type(2) {
   background: linear-gradient(135deg, #ea4335 0%, #d33426 100%);
   box-shadow: 0 2px 6px rgba(234,67,53,0.25), 0 1px 2px rgba(0,0,0,0.1);
 }
 
-.mal-export-toolbar button:nth-of-type(3):hover {
+.mal-export-toolbar button:nth-of-type(2):hover {
   box-shadow: 0 4px 12px rgba(234,67,53,0.35), 0 2px 4px rgba(0,0,0,0.15);
 }
 
-/* Special styling for Debug button */
-.mal-export-toolbar button:last-of-type {
-  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-  box-shadow: 0 2px 6px rgba(108,117,125,0.25), 0 1px 2px rgba(0,0,0,0.1);
-  font-size: 12px;
-  padding: 6px 12px;
-  opacity: 0.85;
+/* Special styling for Help button */
+.mal-export-toolbar button:nth-of-type(3) {
+  background: linear-gradient(135deg, #34a853 0%, #2d8f47 100%);
+  box-shadow: 0 2px 6px rgba(52,168,83,0.25), 0 1px 2px rgba(0,0,0,0.1);
 }
 
-.mal-export-toolbar button:last-of-type:hover {
-  opacity: 1;
-  box-shadow: 0 4px 12px rgba(108,117,125,0.35), 0 2px 4px rgba(0,0,0,0.15);
+.mal-export-toolbar button:nth-of-type(3):hover {
+  box-shadow: 0 4px 12px rgba(52,168,83,0.35), 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* Special styling for Settings button */
+.mal-export-toolbar button:nth-of-type(4) {
+  background: linear-gradient(135deg, #fbbc04 0%, #f9ab00 100%);
+  box-shadow: 0 2px 6px rgba(251,188,4,0.25), 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.mal-export-toolbar button:nth-of-type(4):hover {
+  box-shadow: 0 4px 12px rgba(251,188,4,0.35), 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* Toast notification animations */
+@keyframes slideInUp {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100px);
+    opacity: 0;
+  }
 }
 
 /* Enhanced selected card styling */
 .mal-export-selected-v1 {
-  outline: 2px solid rgba(26,115,232,0.4) !important;
-  background: linear-gradient(135deg, rgba(26,115,232,0.05) 0%, rgba(26,115,232,0.08) 100%) !important;
-  box-shadow: 0 2px 8px rgba(26,115,232,0.15) !important;
+  outline: 2px solid rgba(26,115,232,0.5) !important;
+  background: linear-gradient(135deg, rgba(26,115,232,0.08) 0%, rgba(26,115,232,0.12) 100%) !important;
+  box-shadow: 0 2px 8px rgba(26,115,232,0.2) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
 
-.mal-export-selected-v1::before {
-  content: '';
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
-  background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 6px rgba(26,115,232,0.4);
-  z-index: 10;
-}
-
-.mal-export-selected-v1::after {
-  content: '✓';
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 11;
-  pointer-events: none;
+/* Checkbox container for proper positioning */
+.mal-export-checkbox-container {
+  display: inline;
+  vertical-align: middle;
 }
 
 /* Enhanced checkbox styling */
 .mal-export-checkbox-v1 { 
-  transform: scale(1.15); 
-  margin-right: 8px;
+  width: 18px;
+  height: 18px;
   cursor: pointer;
   accent-color: #1a73e8;
   transition: transform 0.2s ease;
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin: 0 10px 0 0;
+  padding: 0;
 }
 
 .mal-export-checkbox-v1:hover {
-  transform: scale(1.25);
+  transform: scale(1.15);
+}
+
+.mal-export-checkbox-v1:checked {
+  accent-color: #1a73e8;
 }
 
 /* Card overlay hover effects */
@@ -182,10 +192,6 @@
   filter: brightness(1.02);
 }
 
-.mal-export-toolbar .mal-export-settings { 
-  margin-left: auto; 
-}
-
 /* Custom checkbox styling for modern look */
 .mal-export-toolbar input[type="checkbox"] {
   width: 18px;
@@ -197,18 +203,6 @@
 
 .mal-export-toolbar input[type="checkbox"]:hover {
   transform: scale(1.1);
-}
-
-/* Separator for visual grouping */
-.mal-export-toolbar button:nth-of-type(2)::after {
-  content: '';
-  position: absolute;
-  right: -6px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1px;
-  height: 20px;
-  background: rgba(0,0,0,0.1);
 }
 
 /* ===== Dark Mode Support ===== */
@@ -239,24 +233,19 @@
     box-shadow: 0 4px 16px rgba(59,130,246,0.45), 0 2px 4px rgba(0,0,0,0.3);
   }
   
-  .mal-export-toolbar button:nth-of-type(3) {
+  .mal-export-toolbar button:nth-of-type(4) {
     background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     box-shadow: 0 2px 8px rgba(239,68,68,0.35), 0 1px 2px rgba(0,0,0,0.2);
   }
   
-  .mal-export-toolbar button:nth-of-type(3):hover {
+  .mal-export-toolbar button:nth-of-type(4):hover {
     box-shadow: 0 4px 16px rgba(239,68,68,0.45), 0 2px 4px rgba(0,0,0,0.3);
   }
   
   .mal-export-selected-v1 { 
-    outline: 2px solid rgba(59,130,246,0.5) !important;
-    background: linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(59,130,246,0.12) 100%) !important;
-    box-shadow: 0 2px 12px rgba(59,130,246,0.25) !important;
-  }
-  
-  .mal-export-selected-v1::before {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    box-shadow: 0 2px 8px rgba(59,130,246,0.5);
+    outline: 2px solid rgba(59,130,246,0.6) !important;
+    background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(59,130,246,0.15) 100%) !important;
+    box-shadow: 0 2px 12px rgba(59,130,246,0.3) !important;
   }
   
   .mal-export-card-overlay:hover {
@@ -267,10 +256,7 @@
   .mal-export-toolbar input[type="checkbox"] {
     accent-color: #3b82f6;
   }
-  
-  .mal-export-toolbar button:nth-of-type(2)::after {
-    background: rgba(255,255,255,0.1);
-  }
+
 }
 
 /* ===== Responsive Design ===== */
@@ -312,15 +298,4 @@
   animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-.mal-export-toolbar span {
-  animation: pulse 2s ease-in-out infinite;
-}
+/* Pulse animation removed for cleaner UI */
