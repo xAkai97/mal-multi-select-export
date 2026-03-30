@@ -4,8 +4,6 @@
   "version": "0.2.2",
   "description": "Injects checkboxes on MyAnimeList pages so you can multi-select anime and copy titles/metadata to the clipboard.",
   "permissions": [
-    "scripting",
-    "activeTab",
     "storage"
   ],
   "host_permissions": [
@@ -19,9 +17,5 @@
       "css": ["style.css"],
       "run_at": "document_idle"
     }
-  ],
-  "icons": {
-    "48": "icon48.png",
-    "128": "icon128.png"
-  }
+  ]
 }

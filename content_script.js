@@ -23,7 +23,7 @@
   let redoHistory = [];
   const MAX_HISTORY = 50;
   let contextMenuAnchorIndex = -1; // For right-click context menu
-  let currentTheme = 'auto'; // auto, light, or dark
+  let hasRestoredSelections = false;
 
   // ==================== Theme Management ====================
   /**
@@ -499,8 +499,7 @@
       showToast('✓ Settings saved', 'success');
       overlay.remove();
       
-      // Reapply theme if changed
-      currentTheme = selectedTheme;
+      // Theme is read dynamically via getEffectiveTheme().
     });
     
     // Cancel button handler
@@ -821,7 +820,7 @@
   /**
    * Loads and restores saved selections from storage.
    */
-  function loadSelections() {
+  function loadSelections(showRestoreToast = false) {
     const savedTitles = loadSettingFromStorage('savedSelections');
     if (!savedTitles || !Array.isArray(savedTitles) || savedTitles.length === 0) return;
     
@@ -839,7 +838,7 @@
     
     updateSelectedCount();
     const restoredCount = document.querySelectorAll('.' + CONFIG.CHECKBOX_CLASS + ':checked').length;
-    if (restoredCount > 0) {
+    if (showRestoreToast && restoredCount > 0) {
       showToast(`✓ Restored ${restoredCount} saved selection${restoredCount > 1 ? 's' : ''}`, 'info');
     }
   }
@@ -1012,8 +1011,6 @@
     
     // If clicking checkbox directly, let it handle naturally
     if (isCheckbox) {
-      const allCheckboxes = Array.from(document.querySelectorAll('.' + CONFIG.CHECKBOX_CLASS));
-      lastCheckedIndex = checkbox.__malIndex ?? allCheckboxes.indexOf(checkbox);
       return;
     }
     
@@ -1035,8 +1032,6 @@
     checkbox.checked = !checkbox.checked;
     checkbox.dispatchEvent(new Event('change', { bubbles: false }));
     
-    const allCheckboxes = Array.from(document.querySelectorAll('.' + CONFIG.CHECKBOX_CLASS));
-    lastCheckedIndex = checkbox.__malIndex ?? allCheckboxes.indexOf(checkbox);
   });
 
   /**
@@ -1318,6 +1313,7 @@
     });
     
     updateSelectedCount();
+    saveSelections();
   }
 
   /**
@@ -1372,7 +1368,8 @@
     const animeNodes = findAnimeNodes(true); // Force refresh cache
     animeNodes.forEach((node, index) => attachCheckboxToNode(node, index));
     refreshCheckboxIndices();
-    loadSelections(); // Restore saved selections
+    loadSelections(!hasRestoredSelections); // Restore saved selections
+    hasRestoredSelections = true;
   }
 
   // ==================== Keyboard Shortcuts ====================
