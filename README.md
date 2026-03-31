@@ -50,7 +50,7 @@ Browser extension that injects checkboxes on MyAnimeList season pages so you can
 
 ## Export Integration
 The exported JSON/CSV can be imported into:
-- [qBittorrent RSS Rule Editor](https://github.com/xAkai97/qBittorrent-RSS-Rule-Editer) via "Import > Open JSON File" or "Import > Paste from Clipboard"
+- [Torrent RSS Rule Editor](https://github.com/xAkai97/Torrent-RSS-Rule-Editor) via "Import > Open JSON File" or "Import > Paste from Clipboard"
 - Spreadsheet applications (use CSV export)
 - Any tool that accepts JSON arrays of strings
 
@@ -75,7 +75,7 @@ Access Settings via the Settings button (yellow/gold button on the right side of
 - **Disable right-click context menu**: Turn off the extension's custom right-click menu if it conflicts with other extensions or preferences
 
 ## Related Projects
-- [qBittorrent RSS Rule Editor](https://github.com/xAkai97/qBittorrent-RSS-Rule-Editer) — Desktop utility to turn anime title lists into qBittorrent RSS rules
+- [Torrent RSS Rule Editor](https://github.com/xAkai97/Torrent-RSS-Rule-Editor) — Desktop utility to turn anime title lists into torrent RSS rules
 
 ## License
 MIT License. See [LICENSE](LICENSE) file for details.
