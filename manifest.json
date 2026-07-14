@@ -1,15 +1,22 @@
 {
   "manifest_version": 3,
   "name": "MAL Multi-Select Export",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Injects checkboxes on MyAnimeList pages so you can multi-select anime and copy titles/metadata to the clipboard.",
   "permissions": [
-    "storage"
+    "storage",
+    "contextMenus"
   ],
   "host_permissions": [
     "*://myanimelist.net/*",
     "*://*.myanimelist.net/*"
   ],
+  "action": {
+    "default_title": "MAL Multi-Select Export"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["https://myanimelist.net/anime/season*"],

@@ -992,6 +992,7 @@
    * @param {MouseEvent} event - The click event
    */
   document.addEventListener('click', function handleGlobalClick(event) {
+    if (typeof isExtensionDisabled !== 'undefined' && isExtensionDisabled) return;
     const toolbar = document.getElementById(CONFIG.TOOLBAR_ID);
     if (toolbar?.contains(event.target)) return;
     
@@ -1383,6 +1384,7 @@
    * @param {KeyboardEvent} event - The keyboard event
    */
   document.addEventListener('keydown', function handleKeyboardShortcuts(event) {
+    if (typeof isExtensionDisabled !== 'undefined' && isExtensionDisabled) return;
     // Ctrl+Z or Cmd+Z: Undo
     if ((event.ctrlKey || event.metaKey) && event.key === 'z' && !event.shiftKey) {
       event.preventDefault();
@@ -1513,6 +1515,7 @@
    * Add context menu on right-click anywhere on the page
    */
   document.addEventListener('contextmenu', (e) => {
+    if (typeof isExtensionDisabled !== 'undefined' && isExtensionDisabled) return;
     // Check if context menu is disabled in settings
     if (loadSettingFromStorage('disableContextMenu') === true) return;
     
@@ -1539,6 +1542,43 @@
   });
 
   // ==================== Initial Scan ====================
-  scanAndAttachCheckboxes();
+  let isExtensionDisabled = false;
+  
+  if (window.chrome?.storage?.local) {
+    chrome.storage.local.get(['extensionDisabled'], (result) => {
+      isExtensionDisabled = !!result.extensionDisabled;
+      if (!isExtensionDisabled) {
+        scanAndAttachCheckboxes();
+      }
+    });
+
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+      if (namespace === 'local' && changes.extensionDisabled !== undefined) {
+        isExtensionDisabled = changes.extensionDisabled.newValue;
+        if (isExtensionDisabled) {
+          // Remove toolbar
+          const toolbar = document.getElementById(CONFIG.TOOLBAR_ID);
+          if (toolbar) toolbar.remove();
+          
+          // Remove checkboxes and overlays
+          document.querySelectorAll('.mal-export-checkbox-container').forEach(c => c.remove());
+          document.querySelectorAll('.' + CONFIG.CARD_OVERLAY_CLASS).forEach(n => {
+            n.classList.remove(CONFIG.CARD_OVERLAY_CLASS, CONFIG.SELECTED_CLASS);
+            delete n.__malExportAttached;
+          });
+          
+          // Remove menus, dialogs
+          document.querySelector('.mal-export-context-menu')?.remove();
+          document.querySelector('.mal-export-help-dialog')?.remove();
+          document.querySelector('.mal-export-settings-dialog')?.remove();
+        } else {
+          scanAndAttachCheckboxes();
+        }
+      }
+    });
+  } else {
+    // Fallback if not running as extension
+    scanAndAttachCheckboxes();
+  }
 
 })();
